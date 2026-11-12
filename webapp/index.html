@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MiniSocial DApp</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 680px; margin: 2rem auto; padding: 0 1rem; }
+    textarea { width: 100%; box-sizing: border-box; padding: .5rem; }
+    button { padding: .5rem 1rem; margin: .25rem .25rem .25rem 0; cursor: pointer; }
+    .post { border: 1px solid #ccc; border-radius: 8px; padding: .6rem .8rem; margin: .5rem 0; }
+    .author { font-size: .8rem; color: #666; word-break: break-all; }
+    #status { font-style: italic; }
+  </style>
+</head>
+<body>
+  <h1>MiniSocial DApp</h1>
+  <p>Compte : <span id="account">non connecté</span></p>
+
+  <textarea id="message" rows="3" placeholder="Votre message..."></textarea>
+  <button onclick="publish()">Publier</button>
+  <button onclick="loadPosts()">Rafraîchir</button>
+
+  <p>Statut : <span id="status">Chargement...</span></p>
+  <p>Total de posts : <span id="total">0</span></p>
+  <div id="posts"></div>
+
+  <script>
+    // ⚠️ À remplacer par l'adresse du contrat déployé (copiée depuis Remix)
+    const CONTRACT_ADDRESS = "0xVOTRE_ADRESSE_DE_CONTRAT";
+
+    // ABI copiée depuis Remix (onglet Solidity Compiler > ABI)
+    const ABI = [
+      { "anonymous": false, "inputs": [
+          { "indexed": true, "internalType": "uint256", "name": "index", "type": "uint256" },
+          { "indexed": true, "internalType": "address", "name": "author", "type": "address" },
+          { "indexed": false, "internalType": "string", "name": "message", "type": "string" }
+        ], "name": "PostPublished", "type": "event" },
+      { "inputs": [{ "internalType": "uint256", "name": "index", "type": "uint256" }],
+        "name": "getPost",
+        "outputs": [{ "internalType": "string", "name": "", "type": "string" },
+                    { "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view", "type": "function" },
+      { "inputs": [], "name": "getTotalPosts",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view", "type": "function" },
+      { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "name": "posts",
+        "outputs": [{ "internalType": "string", "name": "message", "type": "string" },
+                    { "internalType": "address", "name": "author", "type": "address" }],
+        "stateMutability": "view", "type": "function" },
+      { "inputs": [{ "internalType": "string", "name": "_message", "type": "string" }],
+        "name": "publishPost", "outputs": [],
+        "stateMutability": "nonpayable", "type": "function" }
+    ];
+
+    let web3, contract, account;
+
+    function setStatus(s) {
+      document.getElementById("status").textContent = s;
+      console.log(s);
+    }
+
+    async function init() {
+      if (!window.ethereum) { setStatus("MetaMask n'est pas installé."); return; }
+      web3 = new Web3(window.ethereum);
+      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+      account = accounts[0];
+      document.getElementById("account").textContent = account;
+      contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
+      window.ethereum.on("accountsChanged", a => {
+        account = a[0];
+        document.getElementById("account").textContent = account;
+      });
+      setStatus("Prêt !");
+      await loadPosts();
+    }
+
+    async function publish() {
+      const msg = document.getElementById("message").value.trim();
+      if (!msg) { setStatus("Message vide."); return; }
+      try {
+        setStatus("Envoi de la transaction...");
+        await contract.methods.publishPost(msg).send({ from: account });
+        document.getElementById("message").value = "";
+        setStatus("Message publié.");
+        await loadPosts();
+      } catch (e) { setStatus("Erreur : " + e.message); }
+    }
+
+    async function loadPosts() {
+      try {
+        const total = Number(await contract.methods.getTotalPosts().call());
+        document.getElementById("total").textContent = total;
+        const box = document.getElementById("posts");
+        box.innerHTML = "";
+        for (let i = total - 1; i >= 0; i--) {
+          const r = await contract.methods.getPost(i).call();
+          const div = document.createElement("div");
+          div.className = "post";
+          const m = document.createElement("div");
+          m.textContent = "#" + i + " — " + r[0];      // textContent : pas d'injection HTML
+          const a = document.createElement("div");
+          a.className = "author";
+          a.textContent = "Auteur : " + r[1];
+          div.append(m, a);
+          box.appendChild(div);
+        }
+      } catch (e) { setStatus("Erreur : " + e.message); }
+    }
+
+    init();
+  </script>
+</body>
+</html>
