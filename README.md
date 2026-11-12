@@ -1,4 +1,4 @@
-<img width="1498" height="954" alt="image" src="https://github.com/user-attachments/assets/d3f92bc4-22ce-49b2-80bb-450844287317" /># Atelier 3 : Smart Contract « Mini Réseau Social » en Solidity
+# Atelier 3 : Smart Contract « Mini Réseau Social » en Solidity
 
 **Module :** Blockchain — 2026/2027  
 **Auteur :** Mehdi Arbai  
@@ -84,20 +84,20 @@ Dans l'onglet **Deploy & Run Transactions**, l'environnement a été connecté �
 
 #### Test 4 : nombre total de messages
 - **Étapes :** `getTotalPosts()` après la publication.
-- **Résultat attendu :** `1`.
-- **Résultat obtenu :** _(à compléter)_
+- **Résultat attendu :** `5`.
+- **Résultat obtenu :** ![Tests](docs/screenshots/02-deploiement_b.png)
 
 #### Test 5 : index invalide
 - **Étapes :** `getPost(99)`.
 - **Résultat attendu :** erreur `Index hors limites`.
-- **Résultat obtenu :** _(à compléter)_
+- **Résultat obtenu :** ![Tests](docs/screenshots/03-tests_b.png)
 
 #### Test 6 : publication avec d'autres comptes
 - **Étapes :** connexion de MetaMask avec les comptes `test1` et `test2`, puis `publishPost(...)` depuis chaque compte.
 - **Résultat attendu :** chaque message est enregistré avec l'adresse de son auteur.
-- **Résultat obtenu :** _(à compléter)_
+- **Résultat obtenu :** Non réalisé à cause d’un problème de connexion des comptes dans Remix
 
-![Tests](docs/screenshots/03-tests.png)
+
 
 ### 4.5 Remarques
 - `publishPost` modifie l'état de la blockchain : elle consomme du gas et nécessite une confirmation MetaMask.
