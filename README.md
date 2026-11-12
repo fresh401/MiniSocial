@@ -81,7 +81,7 @@ Dans l'onglet **Deploy & Run Transactions**, l'environnement a été connecté �
 - **Résultat obtenu :**
   - message : `Bonjour depuis compte 1`
   - auteur : `0xb31EF24FdB63fC7e57e900BF81F9dA923879753A` ✅
-
+![Tests](docs/screenshots/03-tests.png)
 #### Test 4 : nombre total de messages
 - **Étapes :** `getTotalPosts()` après la publication.
 - **Résultat attendu :** `5`.
