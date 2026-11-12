@@ -109,7 +109,3 @@ Dans l'onglet **Deploy & Run Transactions**, l'environnement a été connecté �
 ## 5. Conclusion
 
 Ce TP m'a permis de définir une structure et un tableau dynamique en Solidity, d'utiliser `msg.sender`, de distinguer fonctions de lecture (`view`) et d'écriture, et de déployer et tester un contrat sur le réseau de test Sepolia avec Remix et MetaMask.
-
-## 6. Licence
-
-MIT
