@@ -113,7 +113,7 @@ contract MiniSocial {
 
 #### Test 2 — Publication avec le compte 1
 
-- **Étapes :** `publishPost("Bonjour depuis le compte 1")` → confirmer dans MetaMask.
+- **Étapes :** `publishPost("Bonjour depuis compte 1")` → confirmer dans MetaMask.
 - **Résultat attendu :** transaction validée, un événement `PostPublished` dans les logs.
 - **Résultat obtenu :** _(à compléter : hash, gas utilisé)_
 
