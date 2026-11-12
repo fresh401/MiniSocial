@@ -1,8 +1,8 @@
-# Atelier 3 : Smart Contract « Mini Réseau Social » en Solidity
+<img width="1498" height="954" alt="image" src="https://github.com/user-attachments/assets/d3f92bc4-22ce-49b2-80bb-450844287317" /># Atelier 3 : Smart Contract « Mini Réseau Social » en Solidity
 
-**Module :** Blockchain — 2026/2027
-**Auteur :** _[Votre nom et prénom]_
-**Encadrante :** Pr. Ikram BEN ADBEL OUAHAB
+**Module :** Blockchain — 2026/2027  
+**Auteur :** Mehdi Arbai  
+**Encadrante :** Pr. Ikram BEN ADBEL OUAHAB  
 **Outils :** Remix IDE, MetaMask, réseau de test Sepolia (SepoliaETH)
 
 ---
@@ -23,154 +23,93 @@ Réaliser un smart contract `MiniSocial` permettant à des utilisateurs de publi
 
 ## 3. Implémentation
 
-### 3.1 Code source (`contracts/MiniSocial.sol`)
-
-```solidity
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
-
-contract MiniSocial {
-    struct Post {
-        string message;
-        address author;
-    }
-
-    Post[] public posts;
-
-    event PostPublished(uint256 indexed index, address indexed author, string message);
-
-    function publishPost(string memory _message) public {
-        posts.push(Post(_message, msg.sender));
-        emit PostPublished(posts.length - 1, msg.sender, _message);
-    }
-
-    function getPost(uint index) public view returns (string memory, address) {
-        require(index < posts.length, "Index hors limites");
-        Post storage p = posts[index];
-        return (p.message, p.author);
-    }
-
-    function getTotalPosts() public view returns (uint) {
-        return posts.length;
-    }
-}
-```
-
-### 3.2 Explication
+Le code source complet est dans [`contracts/MiniSocial.sol`](contracts/MiniSocial.sol).
 
 | Élément | Rôle |
 |---|---|
 | `struct Post` | Regroupe le message (`string`) et l'adresse de l'auteur (`address`). |
-| `Post[] public posts` | Tableau dynamique stockant tous les messages publiés. Le mot-clé `public` génère un getter automatique `posts(uint)`. |
+| `Post[] public posts` | Tableau dynamique stockant tous les messages publiés. `public` génère un getter automatique `posts(uint)`. |
 | `publishPost(string memory _message)` | Crée un `Post` avec le message et `msg.sender` (l'adresse qui appelle la fonction), puis l'ajoute au tableau avec `push`. Émet l'événement `PostPublished`. |
-| `getPost(uint index)` | Fonction `view` (gratuite, lecture seule) qui retourne le message et l'auteur. Le `require` évite un accès hors limites (sinon la transaction échoue avec un `panic`). |
+| `getPost(uint index)` | Fonction `view` (lecture gratuite) qui retourne le message et l'auteur. Le `require` évite un accès hors limites. |
 | `getTotalPosts()` | Retourne `posts.length`. |
-| `event PostPublished` | Ajout facultatif : facilite l'écoute des nouveaux posts par une interface web. |
+| `event PostPublished` | Ajout facultatif : permet à une interface d'écouter les nouveaux posts. |
 
 ## 4. Déploiement et tests
 
-### 4.1 Préparation de l'environnement
-
-1. Installer l'extension **MetaMask** et créer un compte.
-2. Activer les réseaux de test et choisir **Sepolia**.
-3. Obtenir des SepoliaETH via un faucet (ex. Google Cloud Web3 Faucet, Alchemy Sepolia Faucet).
-4. Créer un **second compte** (et idéalement un troisième) dans MetaMask : _Add account_ — puis leur envoyer un peu de SepoliaETH pour payer le gas.
+### 4.1 Préparation
+1. Installation de **MetaMask** et création d'un compte.
+2. Passage sur le réseau de test **Sepolia**.
+3. Obtention de SepoliaETH via un faucet.
 
 ### 4.2 Compilation (Remix)
+1. Création du fichier `MiniSocial.sol` dans Remix IDE.
+2. Onglet **Solidity Compiler** : compilation réussie.
 
-1. Ouvrir <https://remix.ethereum.org> et créer le fichier `MiniSocial.sol`, y coller le code.
-2. Onglet **Solidity Compiler** : version `0.8.26`, cliquer sur **Compile MiniSocial.sol**.
-3. Résultat attendu : coche verte, aucune erreur.
+> Remarque : Remix utilisait par défaut le compilateur 0.8.34, alors que le contrat imposait exactement `0.8.26`. J'ai remplacé `pragma solidity 0.8.26;` par `pragma solidity ^0.8.26;` pour autoriser les versions supérieures.
 
 ![Compilation](docs/screenshots/01-compilation.png)
 
 ### 4.3 Déploiement sur Sepolia
-
-1. Onglet **Deploy & Run Transactions**.
-2. **Environment** : `Injected Provider - MetaMask` (le réseau affiché doit être _Sepolia_).
-3. Sélectionner le compte 1 (déployeur), contrat `MiniSocial`, cliquer sur **Deploy**.
-4. Confirmer la transaction dans MetaMask.
+Dans l'onglet **Deploy & Run Transactions**, l'environnement a été connecté à MetaMask, puis le contrat `MiniSocial` a été déployé avec le compte 1 (confirmation dans MetaMask).
 
 | Information | Valeur |
 |---|---|
 | Réseau | Sepolia |
-| Adresse du contrat | `0x...` _(à compléter)_ |
-| Hash de la transaction de déploiement | `0x...` _(à compléter)_ |
-| Adresse du déployeur (compte 1) | `0x...` _(à compléter)_ |
-| Lien Etherscan | `https://sepolia.etherscan.io/address/0x...` _(à compléter)_ |
+| Adresse du contrat | `0x75AD1C5ED3A165B0eE11f12a17928617479FD1fE` |
+| Hash de la transaction de déploiement | `0x401b0279adcc490f3e01053c605bfb696f0fece51be0a4404abb0e290836e0f2` |
+| Adresse du déployeur (compte 1) | `0xb31EF24FdB63fC7e57e900BF81F9dA923879753A` |
+| Etherscan (contrat) | https://sepolia.etherscan.io/address/0x75AD1C5ED3A165B0eE11f12a17928617479FD1fE |
+| Etherscan (transaction) | https://sepolia.etherscan.io/tx/0x401b0279adcc490f3e01053c605bfb696f0fece51be0a4404abb0e290836e0f2 |
 
 ![Déploiement](docs/screenshots/02-deploiement.png)
 
-### 4.4 Scénarios de test
+### 4.4 Tests
 
-> Pour chaque test : changer de compte dans MetaMask, **puis** (dans Remix, liste _Account_) sélectionner le même compte avant d'appeler la fonction.
-
-#### Test 1 — Contrat vide
-
-- **Étapes :** appeler `getTotalPosts()`.
+#### Test 1 : contrat vide
+- **Étapes :** appel de `getTotalPosts()`.
 - **Résultat attendu :** `0`.
-- **Résultat obtenu :** _(à compléter)_
+- **Résultat obtenu :** `0`. ✅
 
-#### Test 2 — Publication avec le compte 1
-
-- **Étapes :** `publishPost("Bonjour depuis compte 1")` → confirmer dans MetaMask.
-- **Résultat attendu :** transaction validée, un événement `PostPublished` dans les logs.
-- **Résultat obtenu :** _(à compléter : hash, gas utilisé)_
-
-#### Test 3 — Publication avec le compte 2
-
-- **Étapes :** changer de compte, `publishPost("Salut, ici le compte 2")`.
+#### Test 2 : publication d'un message
+- **Étapes :** `publishPost("Bonjour depuis compte 1")` avec le compte 1, puis confirmation dans MetaMask.
 - **Résultat attendu :** transaction validée.
+- **Résultat obtenu :** transaction validée sur Sepolia. ✅
+
+#### Test 3 : lecture d'un post
+- **Étapes :** `getPost(0)`.
+- **Résultat attendu :** le message et l'adresse du compte 1.
+- **Résultat obtenu :**
+  - message : `Bonjour depuis compte 1`
+  - auteur : `0xb31EF24FdB63fC7e57e900BF81F9dA923879753A` ✅
+
+#### Test 4 : nombre total de messages
+- **Étapes :** `getTotalPosts()` après la publication.
+- **Résultat attendu :** `1`.
 - **Résultat obtenu :** _(à compléter)_
 
-#### Test 4 — Publication avec le compte 3
-
-- **Étapes :** `publishPost("Mon premier message sur MiniSocial")`.
-- **Résultat obtenu :** _(à compléter)_
-
-#### Test 5 — Nombre total de messages
-
-- **Étapes :** appeler `getTotalPosts()`.
-- **Résultat attendu :** `3`.
-- **Résultat obtenu :** _(à compléter)_
-
-#### Test 6 — Lecture des posts
-
-| Appel | Message attendu | Auteur attendu | Résultat obtenu |
-|---|---|---|---|
-| `getPost(0)` | Bonjour depuis le compte 1 | adresse compte 1 | _(à compléter)_ |
-| `getPost(1)` | Salut, ici le compte 2 | adresse compte 2 | _(à compléter)_ |
-| `getPost(2)` | Mon premier message sur MiniSocial | adresse compte 3 | _(à compléter)_ |
-
-#### Test 7 — Index invalide
-
+#### Test 5 : index invalide
 - **Étapes :** `getPost(99)`.
-- **Résultat attendu :** appel rejeté avec le message `Index hors limites`.
+- **Résultat attendu :** erreur `Index hors limites`.
+- **Résultat obtenu :** _(à compléter)_
+
+#### Test 6 : publication avec d'autres comptes
+- **Étapes :** connexion de MetaMask avec les comptes `test1` et `test2`, puis `publishPost(...)` depuis chaque compte.
+- **Résultat attendu :** chaque message est enregistré avec l'adresse de son auteur.
 - **Résultat obtenu :** _(à compléter)_
 
 ![Tests](docs/screenshots/03-tests.png)
 
 ### 4.5 Remarques
-
-- `publishPost` modifie l'état de la blockchain : elle **consomme du gas** et nécessite une confirmation MetaMask.
-- `getPost` et `getTotalPosts` sont des fonctions `view` : lecture **gratuite**, sans transaction.
+- `publishPost` modifie l'état de la blockchain : elle consomme du gas et nécessite une confirmation MetaMask.
+- `getPost` et `getTotalPosts` sont des fonctions `view` : lecture gratuite, sans transaction.
 - L'auteur est toujours `msg.sender` : il ne peut pas être falsifié par l'utilisateur.
-- Les messages sont **publics et immuables** : ne jamais y écrire d'information sensible.
+- Les messages sont publics et immuables.
+- Difficulté rencontrée : Remix connecté via WalletConnect n'affichait qu'un seul compte ; il faut utiliser *Injected Provider - MetaMask* et autoriser chaque compte dans MetaMask pour changer d'auteur.
 
-## 5. Bonus : interface web (DApp)
+## 5. Conclusion
 
-Dans l'esprit du tutoriel _Deploying & Interacting with a Smart Contract using a WebApp_, une interface `webapp/index.html` utilise **web3.js** pour publier et lister les messages.
+Ce TP m'a permis de définir une structure et un tableau dynamique en Solidity, d'utiliser `msg.sender`, de distinguer fonctions de lecture (`view`) et d'écriture, et de déployer et tester un contrat sur le réseau de test Sepolia avec Remix et MetaMask.
 
-1. Dans `webapp/index.html`, remplacer `CONTRACT_ADDRESS` par l'adresse du contrat déployé.
-2. Servir le dossier `webapp` via XAMPP (`htdocs/my_webapp`) ou `npx serve webapp`.
-3. Ouvrir la page, se connecter avec MetaMask (réseau Sepolia) et publier un message.
-
-![DApp](docs/screenshots/04-dapp.png)
-
-## 6. Conclusion
-
-Ce TP m'a permis de : définir une structure et un tableau dynamique en Solidity, utiliser `msg.sender`, distinguer fonctions de lecture (`view`) et d'écriture, et déployer/tester un contrat sur un réseau de test avec Remix et MetaMask.
-
-## 7. Licence
+## 6. Licence
 
 MIT
